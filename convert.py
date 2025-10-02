@@ -1,5 +1,6 @@
 import os
-from PIL import Image, ImageDraw
+import argparse
+from PIL import Image
 import numpy as np
 
 def create_bmp(src, char_width = 64, dot_bmp_width = 16):
@@ -66,12 +67,36 @@ def create_bmp(src, char_width = 64, dot_bmp_width = 16):
         
         binary_data = bytes(byte_list)
 
-        with open("%d.bin" % i, 'wb') as f_out:
+        with open("./out/%d.bin" % i, 'wb') as f_out:
             f_out.write(binary_data)
         
 
 
 
 if __name__ == '__main__':
-    src = "./img/font.png"
-    create_bmp(src)
+    parser = argparse.ArgumentParser(
+        description="A utility to convert a graphical font map into a binary file for embedded use.",
+        formatter_class=argparse.RawTextHelpFormatter
+    )
+
+    parser.add_argument(
+        "input_file",
+        help="The path to the source font map image (e.g., gothicdot16_font_map.png)."
+    )
+
+    parser.add_argument(
+        "char_width",
+        help="The width of each character in the font map."
+    )
+
+    parser.add_argument(
+        "output_width",
+        help="The output width of your bitmap for each character."
+    )
+
+    os.makedirs("out", exist_ok=True)
+
+    args = parser.parse_args()
+
+    src = args.input_file
+    create_bmp(src, int(args.char_width), int(args.output_width))
